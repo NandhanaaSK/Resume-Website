@@ -18,4 +18,4 @@ Plagiarism Detection System
 📫 Connect with me:
 
 LinkedIn: www.linkedin.com/in/nandhanaask
-GitHub: github.com/NandhanaaSK
+GitHub: https://github.com/NandhanaaSK
