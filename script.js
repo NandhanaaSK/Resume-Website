@@ -1,68 +1,252 @@
+// ==========================
+// EmailJS Initialization
+// ==========================
+
 (function () {
-  emailjs.init("4jblMIADQjUdpxp4N"); 
+    emailjs.init("YOUR_PUBLIC_KEY");
 })();
 
+
+// ==========================
+// Dark Mode Toggle
+// ==========================
+
 function toggleTheme() {
-  document.body.classList.toggle("dark");
+
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
 }
 
 
+// Load Saved Theme
+window.addEventListener("load", () => {
+
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+    }
+});
+
+
+// ==========================
+// Smooth Scroll Animation
+// ==========================
+
 const sections = document.querySelectorAll("section");
 
-const revealSection = () => {
-  const triggerBottom = window.innerHeight * 0.85;
+const revealSections = () => {
 
-  sections.forEach(section => {
-    const sectionTop = section.getBoundingClientRect().top;
-    if (sectionTop < triggerBottom) {
-      section.classList.add("show");
-    }
-  });
+    const triggerPoint = window.innerHeight * 0.85;
+
+    sections.forEach(section => {
+
+        const sectionTop = section.getBoundingClientRect().top;
+
+        if (sectionTop < triggerPoint) {
+            section.classList.add("show");
+        }
+    });
 };
 
-window.addEventListener("scroll", revealSection);
-window.addEventListener("load", revealSection);
+window.addEventListener("scroll", revealSections);
+window.addEventListener("load", revealSections);
 
 
-document.getElementById("contact-form").addEventListener("submit", function (e) {
-  e.preventDefault();
+// ==========================
+// Active Navbar Link
+// ==========================
 
-  const status = document.getElementById("status");
-  const btn = document.getElementById("sendBtn");
-  const btnText = document.getElementById("btnText");
-  const spinner = document.getElementById("spinner");
+const navLinks = document.querySelectorAll(".nav-links a");
 
-  
-  btn.classList.add("loading");
-  btnText.innerText = "Sending...";
-  spinner.style.display = "inline-block";
+window.addEventListener("scroll", () => {
 
-  emailjs.sendForm(
-    "service_88aozco",   
-    "template_w58tfek",  
-    this
-  ).then(
-    function () {
-      status.innerText = "Message sent successfully!";
-      status.className = "status success show";
+    let current = "";
 
-      btnText.innerText = "Send Message";
-      spinner.style.display = "none";
-      btn.classList.remove("loading");
+    sections.forEach(section => {
 
-      setTimeout(() => {
-        status.classList.remove("show");
-      }, 4000);
-    },
-    function () {
-      status.innerText = "Failed to send message. Try again.";
-      status.className = "status error show";
+        const sectionTop = section.offsetTop - 150;
+        const sectionHeight = section.clientHeight;
 
-      btnText.innerText = "Send Message";
-      spinner.style.display = "none";
-      btn.classList.remove("loading");
+        if (pageYOffset >= sectionTop) {
+            current = section.getAttribute("id");
+        }
+    });
+
+    navLinks.forEach(link => {
+
+        link.classList.remove("active");
+
+        if (link.getAttribute("href") === `#${current}`) {
+            link.classList.add("active");
+        }
+    });
+});
+
+
+// ==========================
+// Typing Effect
+// ==========================
+
+const text = [
+    "AI Enthusiast",
+    "Data Analytics Learner",
+    "Python Developer",
+    "Problem Solver"
+];
+
+let textIndex = 0;
+let charIndex = 0;
+
+const typingElement = document.getElementById("typing");
+
+function typeText() {
+
+    if (!typingElement) return;
+
+    if (charIndex < text[textIndex].length) {
+
+        typingElement.textContent += text[textIndex].charAt(charIndex);
+
+        charIndex++;
+
+        setTimeout(typeText, 100);
+
+    } else {
+
+        setTimeout(eraseText, 1500);
     }
-  );
+}
 
-  this.reset();
+function eraseText() {
+
+    if (charIndex > 0) {
+
+        typingElement.textContent =
+            text[textIndex].substring(0, charIndex - 1);
+
+        charIndex--;
+
+        setTimeout(eraseText, 50);
+
+    } else {
+
+        textIndex++;
+
+        if (textIndex >= text.length) {
+            textIndex = 0;
+        }
+
+        setTimeout(typeText, 300);
+    }
+}
+
+window.addEventListener("load", () => {
+
+    if (typingElement) {
+        typeText();
+    }
+});
+
+
+// ==========================
+// Contact Form
+// ==========================
+
+const form = document.getElementById("contact-form");
+
+if (form) {
+
+    form.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const status = document.getElementById("status");
+
+        status.innerHTML = "Sending message...";
+
+        emailjs.sendForm(
+            "YOUR_SERVICE_ID",
+            "YOUR_TEMPLATE_ID",
+            this
+        )
+        .then(() => {
+
+            status.innerHTML =
+                "✅ Message sent successfully!";
+
+            status.style.color = "#22c55e";
+
+            this.reset();
+
+        })
+        .catch(() => {
+
+            status.innerHTML =
+                "❌ Failed to send message.";
+
+            status.style.color = "#ef4444";
+        });
+    });
+}
+
+
+// ==========================
+// Scroll To Top Button
+// ==========================
+
+const scrollBtn = document.createElement("button");
+
+scrollBtn.innerHTML = "↑";
+
+scrollBtn.id = "scrollTopBtn";
+
+document.body.appendChild(scrollBtn);
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 500) {
+
+        scrollBtn.style.display = "block";
+
+    } else {
+
+        scrollBtn.style.display = "none";
+    }
+});
+
+scrollBtn.addEventListener("click", () => {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+
+
+// ==========================
+// Project Card Hover Effect
+// ==========================
+
+const projectCards =
+    document.querySelectorAll(".project-card");
+
+projectCards.forEach(card => {
+
+    card.addEventListener("mouseenter", () => {
+
+        card.style.transform =
+            "translateY(-10px)";
+    });
+
+    card.addEventListener("mouseleave", () => {
+
+        card.style.transform =
+            "translateY(0)";
+    });
 });
